@@ -1,54 +1,83 @@
-// Save Kitties Presale System
-const PHASE_DURATION = 6 * 24 * 60 * 60; // 6 days in seconds
-let remainingTime = PHASE_DURATION;
-let currentPhase = 1;
-let tokensSold = 0;
-const PHASE_TOKENS = 10000000; // 10M tokens per phase
+// Presale Configuration
+const PRESALE_CONFIG = {
+    phaseDuration: 6 * 24 * 60 * 60 * 1000, // 6 days in ms
+    tokenPrice: 0.0006, // $0.0006 per token
+    phaseTokens: 10000000, // 10M tokens per phase
+    currentPhase: 1,
+    tokensSold: 0,
+    totalRaised: 0
+};
+
+// Initialize Web3
+let web3;
 
 // DOM Elements
-let cryptoInput, tokenOutput;
+const elements = {
+    countdown: document.getElementById('countdown'),
+    progressBar: document.getElementById('progressBar'),
+    cryptoInput: document.getElementById('cryptoInput'),
+    tokenAmount: document.getElementById('tokenAmount'),
+    selectedCurrency: document.getElementById('selectedCurrency'),
+    totalRaised: document.getElementById('totalRaised'),
+    progressPercent: document.getElementById('progressPercent')
+};
 
-// Timer System
-function updateTimer() {
-    const days = Math.floor(remainingTime / 86400);
-    const hours = Math.floor((remainingTime % 86400) / 3600);
-    const minutes = Math.floor((remainingTime % 3600) / 60);
-    const seconds = remainingTime % 60;
+// Animated Loader
+function showLoader() {
+    document.body.classList.add('loading');
+}
 
-    document.getElementById('timer').textContent = 
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+function hideLoader() {
+    document.body.classList.remove('loading');
+}
 
-    if(remainingTime > 0) {
-        remainingTime--;
-        setTimeout(updateTimer, 1000);
+// Full Wallet Integration
+async function connectWallet(chain) {
+    try {
+        showLoader();
+        switch(chain) {
+            case 'ethereum':
+                if(window.ethereum) {
+                    await window.ethereum.enable();
+                    web3 = new Web3(window.ethereum);
+                }
+                break;
+            // Add other chains similarly
+        }
+        updateUI();
+    } catch(error) {
+        console.error('Wallet Error:', error);
+    } finally {
+        hideLoader();
     }
 }
 
-// Initialize after DOM loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Cache DOM elements
-    cryptoInput = document.getElementById('cryptoInput');
-    tokenOutput = document.getElementById('tokenOutput');
-    
-    // Event listeners
-    document.querySelectorAll('.currency').forEach(img => {
-        img.addEventListener('click', () => handleCurrencySelect(img));
-    });
-    
-    cryptoInput.addEventListener('input', calculateTokens);
-    
-    // Start systems
-    updateTimer();
-    calculateTokens(); // Initial calculation
-});
+// Complete Purchase Handler
+async function handlePurchase() {
+    if(!web3) {
+        alert('Connect wallet first!');
+        return;
+    }
 
-// Currency Selection Handler
-function handleCurrencySelect(img) {
-    document.querySelectorAll('.currency').forEach(c => 
-        c.classList.remove('active'));
-    img.classList.add('active');
-    selectedCurrency = img.dataset.currency;
-    calculateTokens();
+    const amount = parseFloat(elements.cryptoInput.value);
+    const accounts = await web3.eth.getAccounts();
+    
+    try {
+        const tx = await web3.eth.sendTransaction({
+            from: accounts[0],
+            to: 'YOUR_CONTRACT_ADDRESS',
+            value: web3.utils.toWei(amount.toString(), 'ether')
+        });
+        
+        updatePurchase(tx);
+    } catch(error) {
+        console.error('Transaction Failed:', error);
+    }
 }
 
-// Rest of your code remains the same...
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTimer();
+    initCurrencySelector();
+    initWallet();
+});
