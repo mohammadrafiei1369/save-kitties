@@ -1,28 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Save Kitties</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Kitties Presale</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.5/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Navigation -->
     <nav>
-        <button id="connectBtn">Connect Wallet</button>
+        <div class="wallet-section">
+            <button id="connectBtn">
+                <i class="fas fa-wallet"></i> Connect Wallet
+            </button>
+            <div class="wallet-dropdown">
+                <button data-chain="solana">
+                    <img src="assets/img/sol.png" alt="Solana"> Solana
+                </button>
+                <button data-chain="ethereum">
+                    <img src="assets/img/eth.png" alt="Ethereum"> Ethereum
+                </button>
+                <button data-chain="bnb">
+                    <img src="assets/img/bnb.png" alt="BNB"> BNB
+                </button>
+            </div>
+        </div>
+        
         <select id="navMenu">
-            <option value="#buy">Buy</option>
+            <option value="#buy">Buy Now</option>
             <option value="#stake">Stake</option>
+            <option value="#tokenomics">Tokenomics</option>
+            <option value="#roadmap">Roadmap</option>
         </select>
     </nav>
 
-    <main>
-        <h1>SAVE KITTIES 🐱</h1>
-        <div id="timer">6d 00h 00m 00s</div>
-        <div class="progress-bar"><div class="progress"></div></div>
+    <!-- Animated Hero Section -->
+    <section class="hero">
+        <lottie-player
+            src="assets/img/cats/floating-cat.gif"
+            background="transparent"
+            speed="1"
+            style="width: 300px; height: 300px;"
+            loop
+            autoplay>
+        </lottie-player>
         
-        <div class="crypto-selector">
-            <img src="assets/img/eth.png" data-currency="ETH">
-            <img src="assets/img/sol.png" data-currency="SOL">
+        <h1 class="title-animation">SAVE KITTIES 🐾</h1>
+        <p class="subtitle-animation">Save cats & get rich!</p>
+        <button class="cta-button" onclick="location.href='#buy'">
+            Join Presale <i class="fas fa-paw"></i>
+        </button>
+    </section>
+
+    <!-- Presale Dashboard -->
+    <section id="buy" class="presale-dashboard">
+        <!-- Timer and Progress -->
+        <div class="phase-info">
+            <div class="timer-container">
+                <i class="fas fa-clock"></i>
+                <div id="countdown">6d 00h 00m 00s</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text">
+                    <span>Progress: <span id="progressPercent">0</span>%</span>
+                    <span>Raised: $<span id="totalRaised">0</span></span>
+                </div>
+            </div>
         </div>
-    </main>
+
+        <!-- Currency Selector -->
+        <div class="currency-selector">
+            <div class="currency-option" data-currency="ETH">
+                <img src="assets/img/eth.png" alt="ETH">
+                <span>Ethereum</span>
+            </div>
+            <div class="currency-option" data-currency="SOL">
+                <img src="assets/img/sol.png" alt="SOL">
+                <span>Solana</span>
+            </div>
+            <div class="currency-option" data-currency="BNB">
+                <img src="assets/img/bnb.png" alt="BNB">
+                <span>BNB</span>
+            </div>
+            <div class="currency-option" data-currency="USDT">
+                <img src="assets/img/usdt.png" alt="USDT">
+                <span>Tether</span>
+            </div>
+        </div>
+
+        <!-- Conversion Interface -->
+        <div class="conversion-interface">
+            <div class="input-group">
+                <input type="number" id="cryptoAmount" placeholder="0.0">
+                <span class="currency-symbol" id="selectedCurrency">ETH</span>
+            </div>
+            <div class="equal-sign">=</div>
+            <div class="output-group">
+                <span id="tokenAmount">0</span>
+                <span class="currency-symbol">SKTS</span>
+            </div>
+        </div>
+
+        <button class="buy-button" onclick="handlePurchase()">
+            <i class="fas fa-shopping-cart"></i> Confirm Purchase
+        </button>
+    </section>
+
+    <!-- Social Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="#" class="social-icon">
+                <img src="assets/img/telegram.png" alt="Telegram">
+            </a>
+            <a href="#" class="social-icon">
+                <img src="assets/img/twitter.png" alt="Twitter">
+            </a>
+        </div>
+        <p class="footer-text">Support cats and get rich! 🐱💰</p>
+    </footer>
 
     <script src="app.js"></script>
 </body>
